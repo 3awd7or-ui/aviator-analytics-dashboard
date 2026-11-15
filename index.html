@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محاكي وتحليل الطائرة ✈️</title>
+    <title>مؤشر النتائج الحية - Crash Analytics</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
         * {
@@ -12,7 +12,6 @@
             box-sizing: border-box;
             font-family: 'Tajawal', sans-serif;
         }
-
         body {
             background-color: #0b0f19;
             color: #f8fafc;
@@ -22,30 +21,24 @@
             align-items: center;
             padding: 20px;
         }
-
         header {
             text-align: center;
             margin-bottom: 25px;
             margin-top: 10px;
         }
-
         header h1 {
             font-size: 2rem;
             color: #38bdf8;
             margin-bottom: 5px;
         }
-
         header p {
             color: #94a3b8;
             font-size: 0.95rem;
         }
-
         .container {
             width: 100%;
             max-width: 900px;
         }
-
-        /* شاشة المحاكاة والعد التنازلي الحية */
         .live-screen {
             background: linear-gradient(135deg, #1e293b, #0f172a);
             border-radius: 16px;
@@ -54,66 +47,24 @@
             border: 2px solid #334155;
             box-shadow: 0 10px 25px -5px rgba(56, 189, 248, 0.15);
             margin-bottom: 25px;
-            position: relative;
-            overflow: hidden;
         }
-
-        .live-screen h3 {
-            color: #94a3b8;
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-        }
-
         .multiplier-display {
             font-size: 4rem;
             font-weight: 900;
             color: #34d399;
             margin: 10px 0;
-            text-shadow: 0 0 20px rgba(52, 211, 153, 0.3);
         }
-
         .flight-status {
             font-size: 1.1rem;
             color: #38bdf8;
             font-weight: 500;
         }
-
-        /* شبكة البطاقات الإحصائية */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 25px;
-        }
-
-        .card {
-            background: #1e293b;
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid #334155;
-            text-align: center;
-        }
-
-        .card h3 {
-            color: #94a3b8;
-            font-size: 0.95rem;
-            margin-bottom: 8px;
-        }
-
-        .card .value {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: #38bdf8;
-        }
-
-        /* الجدول */
         .table-container {
             background: #1e293b;
             border-radius: 12px;
             padding: 20px;
             border: 1px solid #334155;
         }
-
         .table-container h2 {
             font-size: 1.2rem;
             margin-bottom: 15px;
@@ -121,28 +72,18 @@
             border-bottom: 2px solid #334155;
             padding-bottom: 8px;
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
             text-align: center;
         }
-
         th, td {
             padding: 10px;
             border-bottom: 1px solid #334155;
             font-size: 0.95rem;
         }
-
-        th {
-            color: #38bdf8;
-            font-weight: 500;
-        }
-
-        td {
-            color: #cbd5e1;
-        }
-
+        th { color: #38bdf8; font-weight: 500; }
+        td { color: #cbd5e1; }
         .badge {
             background: rgba(52, 211, 153, 0.15);
             color: #34d399;
@@ -150,119 +91,90 @@
             border-radius: 20px;
             font-weight: 700;
         }
-
         .badge.low {
             background: rgba(248, 113, 113, 0.15);
             color: #f87171;
         }
-
-        footer {
-            margin-top: 30px;
-            text-align: center;
-            color: #64748b;
+        .api-status {
+            margin-top: 15px;
             font-size: 0.85rem;
+            color: #f59e0b;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>محاكي حركة الطائرة ✈️</h1>
-        <p>تتبع مباشر ومحاكاة لزمن تحليق الطائرة ومضاعفاتها اللحظية</p>
+        <h1>متابعة نتائج لعبة الطائرة ✈️</h1>
+        <p>لوحة بيانات حية قابلة للربط مع مصادر البيانات الخارجية</p>
     </header>
 
     <div class="container">
-        <!-- شاشة المحاكاة الحية لزمن التحليق -->
         <div class="live-screen">
-            <h3>حالة الطائرة الآن (الجولة الحية)</h3>
+            <h3>حالة الجولة الحية</h3>
             <div class="multiplier-display" id="live-multiplier">1.00x</div>
-            <div class="flight-status" id="flight-timer">الطائرة تحلق منذ: 0.0 ثانية</div>
+            <div class="flight-status" id="flight-timer">جاري مزامنة البيانات...</div>
+            <div class="api-status" id="api-status-text">وضع الاتصال: محاكاة حية (جاهز للربط بـ API خارجي)</div>
         </div>
 
-        <!-- البطاقات الإحصائية -->
-        <div class="stats-grid">
-            <div class="card">
-                <h3>متوسط وقت التحليق</h3>
-                <div class="value">4.2 ثانية</div>
-            </div>
-            <div class="card">
-                <h3>أعلى مضاعف في الجلسة</h3>
-                <div class="value" style="color: #34d399;">5.84x</div>
-            </div>
-        </div>
-
-        <!-- جدول آخر الجولات -->
         <div class="table-container">
-            <h2>سجل أوقات ونتائج الجولات السابقة</h2>
+            <h2>سجل الجولات الأخيرة المحدث</h2>
             <table>
                 <thead>
                     <tr>
-                        <th>وقت التحليق الفعلي</th>
+                        <th>رقم الجولة</th>
                         <th>المضاعف النهائي</th>
                         <th>الحالة</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>6.5 ثانية</td>
-                        <td><span class="badge">3.12x</span></td>
-                        <td>مرتفع</td>
-                    </tr>
-                    <tr>
-                        <td>1.2 ثانية</td>
-                        <td><span class="badge low">1.05x</span></td>
-                        <td>سقوط سريع</td>
-                    </tr>
-                    <tr>
-                        <td>4.1 ثانية</td>
-                        <td><span class="badge">1.95x</span></td>
-                        <td>متوسط</td>
-                    </tr>
+                <tbody id="live-table-body">
+                    <!-- سيتم تعبئتها ديناميكياً -->
                 </tbody>
             </table>
         </div>
     </div>
 
-    <footer>
-        <p>مخصص للرفع والتجربة على GitHub Pages &copy; 2026</p>
-    </footer>
-
     <script>
-        // محاكاة حية لحركة الطائرة وعداد الوقت والمضاعف
-        let currentMultiplier = 1.00;
-        let flightTime = 0.0;
-        let isFlying = true;
-
-        const multiplierElement = document.getElementById('live-multiplier');
-        const timerElement = document.getElementById('flight-timer');
-
-        function updateFlight() {
-            if (isFlying) {
-                flightTime += 0.1;
-                // محاكاة صعود المضاعف تدريجياً مع الوقت
-                currentMultiplier += 0.05 * (Math.random() * 1.5);
+        // دالة لجلب النتائج الحية من API خارجي (في حال قمت بإنشاء خادم وسيط مستقبلاً)
+        async function fetchRealData() {
+            try {
+                // استبدل الرابط أدناه برابط الـ API الخاص بك عندما تقوم ببرمجته
+                // const response = await fetch('https://your-backend-api.com/results');
+                // const data = await response.json();
                 
-                multiplierElement.innerText = currentMultiplier.toFixed(2) + 'x';
-                timerElement.innerText = `الطائرة تحلق منذ: ${flightTime.toFixed(1)} ثانية`;
-
-                // محاكاة عشوائية لسقوط الطائرة بعد ثوانٍ وإعادة البدء
-                if (flightTime > 7 && Math.random() < 0.1) {
-                    isFlying = false;
-                    multiplierElement.style.color = '#f87171';
-                    timerElement.innerText = `💥 طارت بعيداً (Crash) عند ${currentMultiplier.toFixed(2)}x بعد ${flightTime.toFixed(1)} ثانية`;
-                    
-                    // إعادة ضبط الجولة بعد 3 ثوانٍ
-                    setTimeout(() => {
-                        currentMultiplier = 1.00;
-                        flightTime = 0.0;
-                        isFlying = true;
-                        multiplierElement.style.color = '#34d399';
-                    }, 3000);
-                }
+                // كمثال افتراضي للربط البرمجي:
+                updateDashboardWithData(2.15, [
+                    { round: "#4592", multiplier: "2.15x", status: "متوسط" },
+                    { round: "#4591", multiplier: "1.02x", status: "منخفض جداً" },
+                    { round: "#4590", multiplier: "4.50x", status: "مرتفع جداً" }
+                ]);
+            } catch (error) {
+                document.getElementById('api-status-text').innerText = "خطأ في الاتصال بالخادم الخارجي، يتم استخدام الوضع المحلي.";
             }
         }
 
-        setInterval(updateFlight, 100);
+        function updateDashboardWithData(currentMult, historyList) {
+            document.getElementById('live-multiplier').innerText = currentMult.toFixed(2) + 'x';
+            document.getElementById('flight-timer').innerText = "تم استلام التحديث المباشر بنجاح";
+            
+            const tbody = document.getElementById('live-table-body');
+            tbody.innerHTML = "";
+            
+            historyList.forEach(item => {
+                let isLow = parseFloat(item.multiplier) < 1.5;
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${item.round}</td>
+                    <td><span class="badge ${isLow ? 'low' : ''}">${item.multiplier}</span></td>
+                    <td>${item.status}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // تنفيذ التحديث عند فتح الصفحة ثم كل 5 ثوانٍ
+        fetchRealData();
+        setInterval(fetchRealData, 5000);
     </script>
 </body>
 </html>
